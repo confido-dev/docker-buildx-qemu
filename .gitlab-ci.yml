@@ -1,0 +1,50 @@
+image: docker:latest
+
+services:
+  - docker:dind
+
+before_script:
+  - docker info
+
+variables:
+  DOCKER_TEMP: "build-${CI_PROJECT_NAME}-${CI_COMMIT_BRANCH}-${CI_COMMIT_SHORT_SHA}-${CI_PIPELINE_IID}"
+  DOCKER_BASE: "${DOCKER_ACC}/${DOCKER_PKG}"
+  DOCKER_DRIVER: overlay2
+
+stages:
+  - build
+  - push
+
+job_build:
+  stage: build
+  before_script:
+    - apk add curl jq
+    - BUILDX_VERSION=$(curl https://api.github.com/repos/docker/buildx/releases/latest | jq -r '.assets[].browser_download_url' | grep '.linux-arm64$' | sed 's/.*\/v\([0-9.]\+\)\/.*/\1/')
+    - echo "Latest version of buildx is v${BUILDX_VERSION}"
+    - echo "BUILDX_VERSION=${BUILDX_VERSION}" >> container.env
+  script:
+    - docker build --no-cache -t $DOCKER_TEMP:$BUILDX_VERSION --build-arg BUILDX_VERSION=$BUILDX_VERSION .
+    - docker save -o container.tar $DOCKER_TEMP:$BUILDX_VERSION
+  artifacts:
+    name: $DOCKER_TEMP
+    expire_in: 1 hour
+    paths:
+      - container.tar
+    reports:
+      dotenv: container.env
+
+job_push:
+  stage: push
+  needs:
+    - job: job_build
+      artifacts: true
+  only:
+    - master
+  before_script:
+    - docker load --input container.tar
+    - echo "$REGISTRY_PASSWORD" | docker login -u "$REGISTRY_USER" --password-stdin
+  script:
+    - docker image tag $DOCKER_TEMP:$BUILDX_VERSION $DOCKER_BASE:$BUILDX_VERSION
+    - docker image tag $DOCKER_TEMP:$BUILDX_VERSION $DOCKER_BASE:latest
+    - docker image push $DOCKER_BASE:$BUILDX_VERSION
+    - docker image push $DOCKER_BASE:latest
