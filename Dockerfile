@@ -14,7 +14,7 @@ RUN apt-get update && \
     echo 'deb [arch=amd64 signed-by=/etc/apt/trusted.gpg.d/docker.gpg] https://download.docker.com/linux/ubuntu noble stable' >> /etc/apt/sources.list && \
     curl -s 'https://download.docker.com/linux/ubuntu/gpg' | gpg --no-default-keyring --keyring gnupg-ring:/etc/apt/trusted.gpg.d/docker.gpg --import && \
     chmod 644 /etc/apt/trusted.gpg.d/* && \
-	rm /etc/apt/sources.list.d/* && \
+    rm /etc/apt/sources.list.d/* && \
     apt-get update && \
     apt-get install -y --no-install-recommends qemu-user-static binfmt-support docker-ce-cli && \
     apt-get remove -y --purge apt-transport-https gnupg && \
