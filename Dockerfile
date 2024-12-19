@@ -1,9 +1,9 @@
-FROM ubuntu:mantic as base
+FROM ubuntu:mantic AS base
 
 ENV DEBIAN_FRONTEND=noninteractive
 
 ARG BUILDX_VERSION
-ENV BUILDX_VERSION ${BUILDX_VERSION}
+ENV BUILDX_VERSION=${BUILDX_VERSION}
 
 RUN apt-get update && \
     apt-get install -y --no-install-recommends apt-transport-https ca-certificates gnupg wget curl jq && \
@@ -22,4 +22,4 @@ RUN apt-get update && \
 
 RUN mkdir -p /usr/libexec/docker/cli-plugins && \
     curl -s -L "https://github.com/docker/buildx/releases/download/v${BUILDX_VERSION}/buildx-v${BUILDX_VERSION}.linux-arm64" \
-       -o /usr/libexec/docker/cli-plugins/docker-buildx && chmod a+x /usr/libexec/docker/cli-plugins/docker-buildx \
+       -o /usr/libexec/docker/cli-plugins/docker-buildx && chmod a+x /usr/libexec/docker/cli-plugins/docker-buildx
