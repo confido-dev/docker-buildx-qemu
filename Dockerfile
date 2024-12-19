@@ -1,4 +1,4 @@
-FROM ubuntu:mantic AS base
+FROM ubuntu:noble AS base
 
 ENV DEBIAN_FRONTEND=noninteractive
 
@@ -7,11 +7,11 @@ ENV BUILDX_VERSION=${BUILDX_VERSION}
 
 RUN apt-get update && \
     apt-get install -y --no-install-recommends apt-transport-https ca-certificates gnupg wget curl jq && \
-    echo 'deb http://archive.ubuntu.com/ubuntu/ mantic main restricted universe multiverse' > /etc/apt/sources.list && \
-    echo 'deb http://archive.ubuntu.com/ubuntu/ mantic-updates main restricted universe multiverse' >> /etc/apt/sources.list && \
-    echo 'deb http://archive.ubuntu.com/ubuntu/ mantic-backports main restricted universe multiverse' >> /etc/apt/sources.list && \
-    echo 'deb http://security.ubuntu.com/ubuntu mantic-security main restricted universe multiverse' >> /etc/apt/sources.list && \
-    echo 'deb [arch=amd64 signed-by=/etc/apt/trusted.gpg.d/docker.gpg] https://download.docker.com/linux/ubuntu mantic stable' >> /etc/apt/sources.list && \
+    echo 'deb http://archive.ubuntu.com/ubuntu/ noble main restricted universe multiverse' > /etc/apt/sources.list && \
+    echo 'deb http://archive.ubuntu.com/ubuntu/ noble-updates main restricted universe multiverse' >> /etc/apt/sources.list && \
+    echo 'deb http://archive.ubuntu.com/ubuntu/ noble-backports main restricted universe multiverse' >> /etc/apt/sources.list && \
+    echo 'deb http://security.ubuntu.com/ubuntu noble-security main restricted universe multiverse' >> /etc/apt/sources.list && \
+    echo 'deb [arch=amd64 signed-by=/etc/apt/trusted.gpg.d/docker.gpg] https://download.docker.com/linux/ubuntu noble stable' >> /etc/apt/sources.list && \
     curl -s 'https://download.docker.com/linux/ubuntu/gpg' | gpg --no-default-keyring --keyring gnupg-ring:/etc/apt/trusted.gpg.d/docker.gpg --import && \
     chmod 644 /etc/apt/trusted.gpg.d/* && \
     apt-get update && \
